@@ -1,5 +1,8 @@
 import Task from '../models/Task.js'
+
 import asyncWrapper from '../middleware/async-wrapper.js'
+
+import { createCustomError } from '../errors/custom-error.js'
 
 const getAllTasks = asyncWrapper(async (req, res) => {
     const tasks = await Task.find({}) // will get all documents
@@ -15,15 +18,13 @@ const createTask = asyncWrapper(async (req, res) => {
         .json({ task })
 })
 
-const getTask = asyncWrapper(async (req, res) => {
+const getTask = asyncWrapper(async (req, res, next) => {
     const { id: taskId } = req.params
 
     const task = await Task.findOne({ _id: taskId }) // will return null if document doesn't exist
 
     if(!task) {
-        return res
-            .status(404)
-            .json({ message: `No task found with ID ${taskId}` })
+        return next(createCustomError(`No task found with ID ${taskId}`, 404))
     }
 
     res
@@ -44,9 +45,7 @@ const updateTask = asyncWrapper(async (req, res) => {
     )
 
     if(!task) {
-        return res
-            .status(404)
-            .json({ message: `No task found with ID ${taskId}` })
+        return next(createCustomError(`No task found with ID ${taskId}`, 404))
     }
 
     res
@@ -60,9 +59,7 @@ const deleteTask = asyncWrapper(async (req, res) => {
     const task = await Task.findOneAndDelete({ _id: taskId }) // will return null if document doesn't exist
 
     if(!task) {
-        return res
-            .status(404)
-            .json({ message: `No task found with ID ${taskId}` })
+        return next(createCustomError(`No task found with ID ${taskId}`, 404))
     }
 
     res

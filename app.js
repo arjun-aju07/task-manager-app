@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import connectDB from './db/connect.js'
 
 // middleware
+import errorHandler from './middleware/error-handler.js'
 import notFound from './middleware/not-found.js'
 
 // routes
@@ -21,12 +22,15 @@ app.use('/api/v1/tasks', tasks)
 // handles not found path
 app.use(notFound)
 
-const port = 3000
+// error handler
+app.use(errorHandler)
+
+const port = process.env.PORT ?? 3000
 
 const init = async () => {
     try {
         await connectDB(process.env.MONGO_URI)
-        app.listen(3000, console.log(`Server is listening on port ${port}`)) // server is started only when the connection to DB is successful
+        app.listen(port, console.log(`Server is listening on port ${port}`)) // server is started only when the connection to DB is successful
     } catch (e) {
         console.log(e)
     }
