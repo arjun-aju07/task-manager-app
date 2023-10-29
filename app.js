@@ -1,11 +1,13 @@
 import express from 'express'
 
+import tasks from './routes/tasks.js'
+
 const app = express()
 
-app.get('/', (req, res) => {
-    res.send('I am being invoked with a change')
-    res.end()
-})
+// middleware
+app.use(express.json())
+
+app.use('/api/v1/tasks', tasks)
 
 const port = 3000
 app.listen(3000, console.log(`Server is listening on port ${port}`))
