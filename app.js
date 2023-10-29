@@ -3,6 +3,10 @@ import dotenv from 'dotenv'
 
 import connectDB from './db/connect.js'
 
+// middleware
+import notFound from './middleware/not-found.js'
+
+// routes
 import tasks from './routes/tasks.js'
 
 dotenv.config() // loads .env file to process.env
@@ -13,6 +17,9 @@ const app = express()
 app.use(express.json())
 
 app.use('/api/v1/tasks', tasks)
+
+// handles not found path
+app.use(notFound)
 
 const port = 3000
 
